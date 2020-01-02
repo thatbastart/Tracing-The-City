@@ -1,0 +1,12 @@
+01 Mitte						:	 840 |  860
+02 Friedrichshain-Kreuzberg		:	1040 | 1020
+03 Pankow						:	1045 |  610
+04 Charlottenburg-Wilmersdorf	:	 565 | 1040
+05 Spandau						:	 345 |  900
+06 Steglitz-Zehlendorf			:	 475 | 1300
+07 Tempelhof-Schöneberg			:	 910 | 1290
+08 Neukölln						:	1080 | 1275
+09 Treptow-Köpenick				:	1535 | 1350
+10 Marzahn-Hellersdorf			:	1455 |  935
+11 Lichtenberg					:	1225 |  890
+12 Reinickendorf				:	 630 |  600
