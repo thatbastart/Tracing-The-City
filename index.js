@@ -13,7 +13,7 @@ const coord=[ [840,860], //M
               [630,600]] //RDF
 let table;
 let fct=0.05; //scale factor
-let Arr,c=3,tbl;
+let Arr,r=3,c=1,tbl, avg=[[],[],[],[],[],[],[],[],[],[],[],[]];
 
 function preload() {
   //Amt für Statistik Berlin Brandenburg
@@ -25,51 +25,95 @@ function preload() {
 function setup() {
   canvas = createCanvas(2000, 2000,SVG);
   //canvas.parent("sketch");
-  //background(0);
+  background(255);
   rectMode(CENTER);
   ellipseMode(CENTER);
   tbl = table.getArray();
+  for(let x=0;x<12;x++){
+    c=1+x;
+    for(let y=0;y<12;y++){
+      let val=0;
+      r=3+y;
+      if(tbl[r][c]=="-"){
+        val="-";
+      } else {
+        for(let i=0;i<=8;i++){
+          val+=parseInt(tbl[r][c],10);
+          r+=16;
+        }
+        val=Math.round(val/=9);
+      }
+      avg[x][y]=val;
+    }
+  }
+
+  r=3;
+  c=1;
   for(let p=0;p<=8;p++){
     noFill();
     //Abwanderung
-    for (let i=c; i<=c+11;i++){
+    for (let i=r; i<=r+11;i++){
       let s=0;
       for(let j=1;j<=12;j++){
         if(tbl[i][j]!="-"){
-          let x1,y1,x2,y2;
-          x1=coord[i-c][0];
-          y1=coord[i-c][1];
-          x2=coord[j-1][0];
-          y2=coord[j-1][1];
-          for(let k=0; k<=Math.round(parseInt(tbl[i][j])*0.005);k++){
-            x1*=1.02;
-            y1*=1.02;
-            x2*=0.98;
-            y2*=0.98;
-            strokeWeight(0.2);
-            stroke(0,0,200);
-            line(x1,y1,x2,y2);
-          }
             s+=parseInt(tbl[i][j],10);
+            if(p==8){
+              let x1=coord[i-r][0];
+              let y1=coord[i-r][1];
+              let x2=coord[j-1][0];
+              let y2=coord[j-1][1];
+              for(let k=0; k<=Math.round(parseInt(tbl[i][j])*0.003);k++){
+                x1*=1.01;
+                y1*=1.01;
+                x2*=0.99;
+                y2*=0.99;
+                stroke(0,0,200);
+                strokeWeight(5);
+                ellipse(x1,y1,2,2);
+                strokeWeight(0.5);
+                line(x1,y1,x2,y2);
+              }
+            }
         }
       }
       strokeWeight(1);
       stroke(200,0,0);
       let tmp=map(s,5000,25000,0,1000)
-      ellipse(coord[i-c][0],coord[i-c][1],tmp,tmp);
+      ellipse(coord[i-r][0],coord[i-r][1],tmp,tmp);
     }
     //Zuwanderung
     for (let i=1; i<=12;i++){
       let s=0;
-      for(let j=c;j<=c+11;j++){
+      for(let j=r;j<=r+11;j++){
         if(tbl[j][i]!="-"){
           s+=parseInt(tbl[j][i],10);
+          if(p==8){
+            let x1=coord[i-1][0];
+            let y1=coord[i-1][1];
+            let x2=coord[j-r][0];
+            let y2=coord[j-r][1];
+            for(let k=0; k<=Math.round(parseInt(tbl[j][i])*0.003);k++){
+              x1*=1.01;
+              y1*=0.99;
+              x2*=0.99;
+              y2*=1.01;
+              stroke(0,150,200);
+              strokeWeight(5);
+              ellipse(x1,y1,2,2);
+              strokeWeight(0.5);
+              line(x1,y1,x2,y2);
+            }
+          }
         }
       }
-      //rect(coord[i-1][0],coord[i-1][1],s*fct,s*fct);
+      strokeWeight(1);
+      stroke(255,106,0);
+      let tmp=map(s,5000,25000,0,1000)
+      ellipse(coord[i-1][0],coord[i-1][1],tmp,tmp);
     }
-    c+=16;
-  }
+    
+    r+=16;
+  }     
 
 }
 
