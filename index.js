@@ -13,7 +13,7 @@ const coord=[ [840,860], //M
               [630,600]] //RDF
 let table;
 let fct=0.05; //scale factor
-let Arr,r=3,c=1,tbl, avg=[[],[],[],[],[],[],[],[],[],[],[],[]];
+let r=3,c=1,tbl, avg=[[],[],[],[],[],[],[],[],[],[],[],[]];
 
 function preload() {
   //Amt für Statistik Berlin Brandenburg
@@ -25,10 +25,14 @@ function preload() {
 function setup() {
   canvas = createCanvas(2000, 2000,SVG);
   //canvas.parent("sketch");
-  background(255);
+  //background(255);
   rectMode(CENTER);
   ellipseMode(CENTER);
   tbl = table.getArray();
+  let res=[];
+  for (let i=0;i<tbl.length; i++){
+    res[i]=tbl[i].map(Number);
+  }
   for(let x=0;x<12;x++){
     c=1+x;
     for(let y=0;y<12;y++){
@@ -38,7 +42,7 @@ function setup() {
         val="-";
       } else {
         for(let i=0;i<=8;i++){
-          val+=parseInt(tbl[r][c],10);
+          val+=res[r][c];
           r+=16;
         }
         val=Math.round(val/=9);
@@ -47,74 +51,94 @@ function setup() {
     }
   }
 
+  let avg_total=0, sum=0;
+  for(let j=0;j<12;j++){
+    for(let i=0;i<12;i++){
+      if(!isNaN(avg[j][i])){
+        sum+=avg[j][i];
+      }
+    }
+    sum/=12;
+    sum=Math.round(sum);
+    avg_total+=sum;
+    sum=0;
+  }
+  avg_total/=12;
+  avg_total=Math.round(avg_total);
+
+
+
   r=3;
   c=1;
   for(let p=0;p<=8;p++){
     noFill();
+    if(p==0){
+      //Abwanderung
+      for(let i=0;i<12;i++){
+        for(let j=0;j<12;j++){
+          let x1=coord[i][0];
+          let y1=coord[i][1];
+          let x2=coord[j][0];
+          let y2=coord[j][1];
+          for(let k=0; k<=Math.round(avg[i][j]*0.002);k++){
+            if(avg[i][j]<=avg_total){
+              x1*=1.04;
+              y1*=1.04;
+              x2*=0.96;
+              y2*=0.96;
+            } else {
+              x1*=1.04;
+              y2*=1.04;
+              x2*=0.96;
+              y1*=0.96;
+            }
+            stroke(0,50,200);
+            //stroke(0);
+            strokeWeight(5);
+            ellipse(x1,y1,2,2);
+            strokeWeight(1);
+            line(x1,y1,x2,y2);
+          }
+        }
+      }
+    }
+
     //Abwanderung
     for (let i=r; i<=r+11;i++){
       let s=0;
       for(let j=1;j<=12;j++){
-        if(tbl[i][j]!="-"){
-            s+=parseInt(tbl[i][j],10);
-            if(p==8){
-              let x1=coord[i-r][0];
-              let y1=coord[i-r][1];
-              let x2=coord[j-1][0];
-              let y2=coord[j-1][1];
-              for(let k=0; k<=Math.round(parseInt(tbl[i][j])*0.003);k++){
-                x1*=1.01;
-                y1*=1.01;
-                x2*=0.99;
-                y2*=0.99;
-                stroke(0,0,200);
-                strokeWeight(5);
-                ellipse(x1,y1,2,2);
-                strokeWeight(0.5);
-                line(x1,y1,x2,y2);
-              }
-            }
+        if(!isNaN(res[i][j])){
+            s+=res[i][j];
         }
       }
       strokeWeight(1);
       stroke(200,0,0);
-      let tmp=map(s,5000,25000,0,1000)
+      //stroke(0);
+      let tmp=Math.round(map(s,5000,25000,0,1000));
       ellipse(coord[i-r][0],coord[i-r][1],tmp,tmp);
     }
+
     //Zuwanderung
     for (let i=1; i<=12;i++){
       let s=0;
       for(let j=r;j<=r+11;j++){
-        if(tbl[j][i]!="-"){
-          s+=parseInt(tbl[j][i],10);
-          if(p==8){
-            let x1=coord[i-1][0];
-            let y1=coord[i-1][1];
-            let x2=coord[j-r][0];
-            let y2=coord[j-r][1];
-            for(let k=0; k<=Math.round(parseInt(tbl[j][i])*0.003);k++){
-              x1*=1.01;
-              y1*=0.99;
-              x2*=0.99;
-              y2*=1.01;
-              stroke(0,150,200);
-              strokeWeight(5);
-              ellipse(x1,y1,2,2);
-              strokeWeight(0.5);
-              line(x1,y1,x2,y2);
-            }
-          }
+        if(!isNaN(res[j][i])){
+          s+=res[j][i];
         }
       }
       strokeWeight(1);
       stroke(255,106,0);
-      let tmp=map(s,5000,25000,0,1000)
+      //stroke(0);
+      let tmp=Math.round(map(s,5000,25000,0,1000));
       ellipse(coord[i-1][0],coord[i-1][1],tmp,tmp);
     }
     
     r+=16;
-  }     
 
+
+    
+  }    
+  save();
 }
 
 function draw() {
